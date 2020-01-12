@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include <QObject>
 #include <atomic>
 #include "miniaudio.h"
 

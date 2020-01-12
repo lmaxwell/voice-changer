@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_CXX_FLAGS "-fdiagnostics-color -ftree-vectorize")
+set(CMAKE_CXX_FLAGS "-fopenmp -fdiagnostics-color -ftree-vectorize")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
@@ -16,11 +16,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_support)
-    
+
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(PortAudio REQUIRED)
 find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(FFTW REQUIRED DOUBLE_LIB)
+find_package(BLAS REQUIRED)
 
 set(SOURCES
     resources.qrc
@@ -36,8 +37,20 @@ set(SOURCES
     src/audio/AudioInterface.cpp
     src/vc/FFT/FFT.h
     src/vc/FFT/FFT.cpp
+    src/vc/GlottalSource/McLeod/autocorrelation.cpp
+    src/vc/GlottalSource/McLeod/parabolic_interpolation.cpp
+    src/vc/GlottalSource/McLeod/peak_picking.cpp
     src/vc/GlottalSource/Pitch.h
+    src/vc/GlottalSource/Pitch_MPM.cpp
+    src/vc/GlottalSource/Pitch_SWIPE.cpp
     src/vc/GlottalSource/Pitch.cpp
+    src/vc/GlottalSource/LF.h
+    src/vc/GlottalSource/lfEpsAlpha.cpp
+    src/vc/GlottalSource/lfGfmSpec.cpp
+    src/vc/GlottalSource/lfSynthFrame.cpp
+    src/vc/GlottalSource/lfSynth.cpp
+    src/vc/GlottalSource/Rd2tetpta.cpp
+    src/vc/GlottalSource/Rd_msp.cpp
     src/vc/IAIF/IAIF.h
     src/vc/IAIF/IAIF.cpp
     src/vc/LPC/LPC.h
@@ -51,6 +64,7 @@ set(SOURCES
     src/vc/Signal/Window.cpp
     src/vc/Sinusoidal/Sin.h
     src/vc/Sinusoidal/Sin_analysis.cpp
+    src/vc/Sinusoidal/Sin_shm.cpp
     src/vc/PitchShift/PS.h
     src/vc/PitchShift/PS.cpp
     src/vc/VoiceChangerConfig.h
@@ -74,6 +88,7 @@ target_link_libraries(voice_changer PUBLIC
     ${PORTAUDIO_LIBRARIES}
     ${FFTW_LIBRARIES}
     Qt5::Widgets
+    ${BLAS_LIBRARIES}
 )
 
 if (UNIX AND NOT APPLE)

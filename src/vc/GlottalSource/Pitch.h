@@ -5,7 +5,11 @@
 
 namespace Pitch {
 
-    void estimate_SRH(const Eigen::ArrayXd & x, int fs, int f0min, int f0max, int hopsize, Eigen::ArrayXd & pitch, Eigen::ArrayXi & voicing, Eigen::ArrayXi & time);
+    void estimate(const Eigen::ArrayXd & x, int fs, int f0min, int f0max, int hopsize, Eigen::ArrayXd & pitch, Eigen::ArrayXi & voicing, Eigen::ArrayXi & time);
+
+    void estimate_MPM(const std::vector<Eigen::ArrayXd> & frames, double fs, Eigen::ArrayXd & pitch);
+
+    void estimate_SWIPE(const std::vector<Eigen::ArrayXd> & frames, double fs, Eigen::ArrayXd & pitch);
 
 }
 

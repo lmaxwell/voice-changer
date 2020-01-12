@@ -1,24 +1,9 @@
 #include "../Signal/Window.h"
 #include "../FFT/FFT.h"
 #include "Sin.h"
+#include <iostream>
 
 using namespace Eigen;
-
-inline int nextpow2(int x) {
-    if (x < 0)
-        return 0;
-    --x;
-    x |= x >> 1;
-    x |= x >> 2;
-    x |= x >> 4;
-    x |= x >> 8;
-    x |= x >> 16;
-    return x + 1;
-}
-
-inline int sign(double x) {
-    return (x > 0.0) - (x < 0.0);
-}
 
 static void getSins_f0(const ArrayXcd & S, double fs, double f0, ArrayX5d & sins);
 static void delay2spec(int delay, int dftLen, ArrayXcd & shift);
@@ -42,7 +27,7 @@ void sinAnalysis(const ArrayXd & x, double fs, const ArrayXd & f0s, const ArrayX
         int winLen = std::round(winDurNbPer * fs / f0 / 2.0) * 2 + 1;
         ArrayXd win = Window::createBlackmanHarris(winLen) / winLen;
 
-        int dftLen = std::pow<int>(2, nextpow2(winLen) + winOsFactor);
+        int dftLen = nextpow2(winLen) * pow(2, winOsFactor);
         ArrayXcd W;
         delay2spec((winLen - 1) / 2, dftLen, W);
         
@@ -63,7 +48,7 @@ void sinAnalysis(const ArrayXd & x, double fs, const ArrayXd & f0s, const ArrayX
         in.setZero();
         in.head(winLen) = s.cast<dcomplex>();
 
-        rcfft(dftLen);
+        fft(dftLen);
 
         ArrayXcd S = Map<ArrayXcd>(fft_out(dftLen), dftLen);
         S *= W;
@@ -95,8 +80,8 @@ static void getSins_f0(const ArrayXcd & S, double fs, double f0, ArrayX5d & sins
     sins.setZero(maxH + 1, 5);
 
     // By default, use a simple harmonic sampling.
-    sins.col(0).tail(maxH).setLinSpaced(maxH, step, step * maxH);
-    sins.col(1).tail(maxH) = S(1 + sins.col(0).cast<int>()).abs();
+    sins.col(0).tail(maxH).setLinSpaced(step, step * maxH);
+    sins.col(1).tail(maxH) = S(1 + sins.col(0).tail(maxH).cast<int>()).abs();
 
     // ...and replace by the peaks found.
     ArrayXd k, v;
@@ -160,10 +145,10 @@ static void getSins_f0(const ArrayXcd & S, double fs, double f0, ArrayX5d & sins
     sins.col(0).tail(maxH) *= (double) fs / (double) dftLen;
 
     // The harmonic number.
-    sins.col(4).tail(maxH).setLinSpaced(maxH, 1, maxH);
+    sins.col(4).tail(maxH).setLinSpaced(1, maxH);
 
     // Add the DC.
-    sins.row(0) << 0, abs(S(0)), std::arg(S(0)), (abs(S(0)) > abs(S(1)));
+    sins.row(0) << 0, abs(S(0)), std::arg(S(0)), (abs(S(0)) > abs(S(1))), 0;
 }
 
 static void delay2spec(int delay, int dftLen, ArrayXcd & shift)
@@ -175,11 +160,13 @@ static void delay2spec(int delay, int dftLen, ArrayXcd & shift)
         if (dftLen % 2 == 1) {
             // Odd length
             ArrayXcd tmp = exp(dcomplex(0, (delay * 2 * M_PI) / dftLen) * ArrayXcd::LinSpaced((dftLen - 1) / 2, 1, (dftLen - 1) / 2));
+            shift.resize(dftLen);
             shift << 1, tmp, conj(tmp.reverse());
         }
         else {
             // Even length
             ArrayXcd tmp = exp(dcomplex(0, (delay * 2 * M_PI) / dftLen) * ArrayXcd::LinSpaced(dftLen / 2, 1, dftLen / 2));
+            shift.resize(dftLen);
             shift << 1, tmp.head(dftLen / 2 - 1), sign(real(tmp(last))), conj(tmp.tail(dftLen / 2 - 1).reverse());
         }
     }

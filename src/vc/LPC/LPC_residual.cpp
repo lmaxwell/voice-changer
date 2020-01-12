@@ -12,7 +12,7 @@ void lpcResidual(const ArrayXd & x, int L, int shift, int order, ArrayXd & res)
     ArrayXd win = Window::createHanning(L);
   
     start = 0;
-    stop = start + L;
+    stop = start + L - 1;
 
     res.setZero(len);
 
