@@ -40,6 +40,28 @@ set(SOURCES
     src/vc/GlottalSource/McLeod/autocorrelation.cpp
     src/vc/GlottalSource/McLeod/parabolic_interpolation.cpp
     src/vc/GlottalSource/McLeod/peak_picking.cpp
+    src/vc/GlottalSource/REAPER/core/file_resource.h
+    src/vc/GlottalSource/REAPER/core/file_resource.cc
+    src/vc/GlottalSource/REAPER/core/float_matrix-inl.h
+    src/vc/GlottalSource/REAPER/core/float_matrix.h
+    src/vc/GlottalSource/REAPER/core/float_matrix.cc
+    src/vc/GlottalSource/REAPER/core/track.h
+    src/vc/GlottalSource/REAPER/core/track.cc
+    src/vc/GlottalSource/REAPER/epoch_tracker/epoch_tracker.h
+    src/vc/GlottalSource/REAPER/epoch_tracker/epoch_tracker.cc
+    src/vc/GlottalSource/REAPER/epoch_tracker/fd_filter.h
+    src/vc/GlottalSource/REAPER/epoch_tracker/fd_filter.cc
+    src/vc/GlottalSource/REAPER/epoch_tracker/fft.h
+    src/vc/GlottalSource/REAPER/epoch_tracker/fft.cc
+    src/vc/GlottalSource/REAPER/epoch_tracker/lpc_analyzer.h
+    src/vc/GlottalSource/REAPER/epoch_tracker/lpc_analyzer.cc
+    src/vc/GlottalSource/REAPER/REAPER.h
+    src/vc/GlottalSource/REAPER/REAPER.cc
+    src/vc/GlottalSource/EKF/EKF.h
+    src/vc/GlottalSource/EKF/model.cpp
+    src/vc/GlottalSource/EKF/optimise_Tp.cpp
+    src/vc/GlottalSource/EKF/optimise_alpha.cpp
+    src/vc/GlottalSource/EKF/optimise_epsilon.cpp
     src/vc/GlottalSource/Pitch.h
     src/vc/GlottalSource/Pitch_MPM.cpp
     src/vc/GlottalSource/Pitch_SWIPE.cpp
